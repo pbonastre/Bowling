@@ -8,10 +8,10 @@ import static java.lang.Integer.parseInt;
 public class BowlingScore {
 
     private static final String FILENAME = "C:\\workSpaceIJ\\input\\inputChallenge2.txt";
-    private static final int STRIKE = 10;
+    private static final int TEN = 10;
 
     public static HashMap<Integer, ArrayList> playerRolls = new HashMap<Integer, ArrayList>();
-    protected HashMap<Integer, String> output = new HashMap<Integer, String>();
+    protected static HashMap<Integer, ArrayList> output = new HashMap<Integer, ArrayList>();
     private static int rollsNumber = 0;
     private static BufferedReader reader = null;
     private static int AMOUNT_CASES = 0;
@@ -97,23 +97,42 @@ public class BowlingScore {
     }
 
     private static void calculateScorePerPlayer(int roll) {
-        int pin = 0;
+        int totalScore = 0;
+        int outputIndex = 0;
+
+        ArrayList playerIndividialRoll = playerRolls.get(roll);
+        ArrayList playerTotalScore = new ArrayList();
+
+        for(int i= 0; i < playerIndividialRoll.size(); i++){
+            Integer pin = (Integer) playerIndividialRoll.get(i);
+            if(isAStrike(pin)){
+                totalScore = totalScore + pin + addNextThree(i, playerIndividialRoll);
+            }else if(isASpare(i, playerIndividialRoll)){
+                totalScore = totalScore + pin + addNextThree(i, playerIndividialRoll);
+                i++;
+            }else {
+                totalScore = totalScore + pin + (Integer) playerIndividialRoll.get(i+1);
+                i++;
+            }
+            playerTotalScore.add(totalScore);
+        }
+        output.put(roll,playerTotalScore);
+
+
     }
 
-
-
-    private Boolean isAStrike(int score) {
-        return (score == STRIKE);
-    }
-    private void getNextTwoPins(int pin) {
+    private static Integer addNextThree(int i, ArrayList playerIndRoll) {
+        Integer strikeScore = 0;
+        strikeScore = strikeScore + (Integer) playerIndRoll.get(i+1) + (Integer) playerIndRoll.get(i+2);
+        return strikeScore;
     }
 
+    private static Boolean isAStrike(int move) {
+        return (move == TEN);
+    }
 
-
-    private Boolean isASpare() {
-        Boolean isSpare = false;
-        return isSpare;
-
+    private static Boolean isASpare(int index, ArrayList playerIndRoll) {
+        return (((Integer) playerIndRoll.get(index)+ (Integer) playerIndRoll.get(index+1)) == TEN);
     }
 
 
